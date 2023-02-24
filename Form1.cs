@@ -9,13 +9,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Diagnostics;
+using SharpDX.XInput;
 
 namespace torreta
 {
     public partial class Form1 : Form
     {
         static SerialPort _serialPort;
+        XboxController controller; //control de xbox
         public Stopwatch watch { get; set; }
+
+            
         public void SerialConnect()
         {
             try
@@ -39,6 +43,11 @@ namespace torreta
         public Form1()
         {
             InitializeComponent();
+
+            controller = new XboxController(UserIndex.One);
+            timer1.Interval = 100;
+            timer1.Enabled = true;
+
             lblMousePos.ForeColor = Color.Red;
             lblScreenSize.Text = screen.Size + "";
             lblScreenPos.Text = this.Location + "";
@@ -49,7 +58,28 @@ namespace torreta
             cmbPorts.DataSource = ports;
 
             watch = Stopwatch.StartNew();
+
         }
+
+        private void write_torreta_position(int posX, int posY)
+        {
+            //Enviar la posicion al puerto serial
+            if (watch.ElapsedMilliseconds > 15)
+            {
+                watch = Stopwatch.StartNew();
+                if (lblOnOff.Text == "ON")
+                {
+                    //Enviar la posicion al Serial
+                    _serialPort.Write("X" + posX + "Y" + posY);
+                }
+            }
+        }
+
+        public static int Map(short value, short fromLow, short fromHigh, int toLow, int toHigh)
+        {
+            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+        }
+
 
         private void screen_MouseMove(object sender, MouseEventArgs e)
         {
@@ -79,23 +109,12 @@ namespace torreta
             posY = posY / (screenHeight / 180);
 
             
-            if(watch.ElapsedMilliseconds > 15)
-            {
-                watch = Stopwatch.StartNew();
-                if (lblOnOff.Text == "ON")
-                {
-                    //Enviar la posicion al Serial
-                    _serialPort.Write("X" + posX + "Y" + posY);
-                }
-            }
+            write_torreta_position(posX, posY);
             
 
             lblConsola.Text = ("X" + posX + "Y" + posY);
-        }
 
-        private void Form1_DragDrop(object sender, DragEventArgs e)
-        {
-
+            
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -128,6 +147,33 @@ namespace torreta
                 finally {
                     _serialPort.Close();
                 }
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //Visualizar el comportamiento del controller
+            lblControllerStatus.Text = "Controller status: " + controller.IsConnected();
+            if (controller.IsConnected())
+            {
+                controller.UpdateState();
+                short leftThumbX = controller.GetLeftThumbX();
+                short leftThumbY = controller.GetLeftThumbY();
+                short rightThumbX = controller.GetRightThumbX();
+                short rightThumbY = controller.GetRightThumbY();
+
+
+                int posX = 180 - Map(leftThumbX, -32768, 32767, 0, 180);
+                int posY = Map(leftThumbY, -32768, 32767, 0, 180);
+
+                // Haz algo con las posiciones de las palancas
+                lblLTX.Text = "leftThumbX: " + leftThumbX;
+                lblLTY.Text = "leftThumbY: " + leftThumbY;
+                lblRTX.Text = "rightThumbX: " + rightThumbX;
+                lblRTY.Text = "rightThumbY: " + rightThumbY;
+
+                //Enviiar la posicion a la torreta
+                write_torreta_position(posX, posY);
             }
         }
     }

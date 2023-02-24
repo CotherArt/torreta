@@ -34,8 +34,11 @@ namespace torreta
             this.lblScreenPos = new System.Windows.Forms.Label();
             this.lblScreenSize = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblLTX = new System.Windows.Forms.Label();
+            this.lblControllerStatus = new System.Windows.Forms.Label();
             this.lblConsola = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.lblOnOff = new System.Windows.Forms.Label();
             this.btnConnect = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,7 +47,10 @@ namespace torreta
             this.lblMousePos = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.button1 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lblLTY = new System.Windows.Forms.Label();
+            this.lblRTX = new System.Windows.Forms.Label();
+            this.lblRTY = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -81,6 +87,11 @@ namespace torreta
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.lblRTY);
+            this.panel1.Controls.Add(this.lblRTX);
+            this.panel1.Controls.Add(this.lblLTY);
+            this.panel1.Controls.Add(this.lblLTX);
+            this.panel1.Controls.Add(this.lblControllerStatus);
             this.panel1.Controls.Add(this.lblConsola);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
@@ -89,12 +100,30 @@ namespace torreta
             this.panel1.Size = new System.Drawing.Size(156, 591);
             this.panel1.TabIndex = 3;
             // 
+            // lblLTX
+            // 
+            this.lblLTX.AutoSize = true;
+            this.lblLTX.Location = new System.Drawing.Point(4, 243);
+            this.lblLTX.Name = "lblLTX";
+            this.lblLTX.Size = new System.Drawing.Size(72, 15);
+            this.lblLTX.TabIndex = 13;
+            this.lblLTX.Text = "leftThumbX:";
+            // 
+            // lblControllerStatus
+            // 
+            this.lblControllerStatus.AutoSize = true;
+            this.lblControllerStatus.Location = new System.Drawing.Point(3, 228);
+            this.lblControllerStatus.Name = "lblControllerStatus";
+            this.lblControllerStatus.Size = new System.Drawing.Size(97, 15);
+            this.lblControllerStatus.TabIndex = 12;
+            this.lblControllerStatus.Text = "Controller status:";
+            // 
             // lblConsola
             // 
-            this.lblConsola.Location = new System.Drawing.Point(3, 231);
+            this.lblConsola.Location = new System.Drawing.Point(3, 316);
             this.lblConsola.Multiline = true;
             this.lblConsola.Name = "lblConsola";
-            this.lblConsola.Size = new System.Drawing.Size(150, 357);
+            this.lblConsola.Size = new System.Drawing.Size(150, 263);
             this.lblConsola.TabIndex = 11;
             // 
             // panel2
@@ -114,6 +143,16 @@ namespace torreta
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(156, 225);
             this.panel2.TabIndex = 10;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(4, 182);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "Disconnect";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // lblOnOff
             // 
@@ -182,15 +221,36 @@ namespace torreta
             this.label2.TabIndex = 5;
             this.label2.Text = "Screen";
             // 
-            // button1
+            // timer1
             // 
-            this.button1.Location = new System.Drawing.Point(4, 182);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Disconnect";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // lblLTY
+            // 
+            this.lblLTY.AutoSize = true;
+            this.lblLTY.Location = new System.Drawing.Point(4, 258);
+            this.lblLTY.Name = "lblLTY";
+            this.lblLTY.Size = new System.Drawing.Size(72, 15);
+            this.lblLTY.TabIndex = 14;
+            this.lblLTY.Text = "leftThumbY:";
+            // 
+            // lblRTX
+            // 
+            this.lblRTX.AutoSize = true;
+            this.lblRTX.Location = new System.Drawing.Point(4, 273);
+            this.lblRTX.Name = "lblRTX";
+            this.lblRTX.Size = new System.Drawing.Size(80, 15);
+            this.lblRTX.TabIndex = 15;
+            this.lblRTX.Text = "rigthThumbX:";
+            // 
+            // lblRTY
+            // 
+            this.lblRTY.AutoSize = true;
+            this.lblRTY.Location = new System.Drawing.Point(4, 288);
+            this.lblRTY.Name = "lblRTY";
+            this.lblRTY.Size = new System.Drawing.Size(80, 15);
+            this.lblRTY.TabIndex = 16;
+            this.lblRTY.Text = "rightThumbY:";
             // 
             // Form1
             // 
@@ -201,7 +261,6 @@ namespace torreta
             this.Controls.Add(this.screen);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.Move += new System.EventHandler(this.Form1_Move);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.panel1.ResumeLayout(false);
@@ -230,6 +289,12 @@ namespace torreta
         private System.Windows.Forms.TextBox lblConsola;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lblControllerStatus;
+        private System.Windows.Forms.Label lblLTX;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label lblRTY;
+        private System.Windows.Forms.Label lblRTX;
+        private System.Windows.Forms.Label lblLTY;
     }
 }
 
