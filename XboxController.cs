@@ -14,7 +14,10 @@ namespace torreta
         public XboxController(UserIndex userIndex)
         {
             controller = new Controller(userIndex);
-            gamepad = controller.GetState().Gamepad;
+            try
+            {
+                gamepad = controller.GetState().Gamepad;
+            }catch (Exception ex) { return; }
         }
 
         public void UpdateState()
